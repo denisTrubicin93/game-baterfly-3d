@@ -1,0 +1,175 @@
+*{
+  box-sizing: border-box;
+}
+
+body{
+  margin: 0;
+}
+
+.promptRound2, .promptRound3{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 300px;
+  border: 5px solid #9808b4;
+  border-radius: 30px;
+  background-color: #ffffffa5;
+  z-index: 10;
+}
+.promptRound2 p, .promptRound3 p{
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 30px;
+  font-weight: bold;
+  color: #9808b4;
+  width: 350px;
+}
+.promptRound2 img, .promptRound3 img{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+}
+.promptRound2 img.baterfly{
+  animation: 2s ease-in .2s infinite both running moveToFlowerPromptR2;
+  z-index: 11;
+}
+.promptRound3 img.baterfly{
+  animation: 3s ease-in .2s infinite both running moveToFlowerPromptR3;
+  z-index: 11;
+}
+.promptRound3 img.flowerViolet{
+  animation: 3s ease-in .2s infinite both running flowerVioletPos;
+}
+.promptRound3 img.flowerYellow{
+  animation: 3s ease-in .2s infinite both running flowerYellowPos;
+}
+.circle-big{
+  width: 100%;
+  height: 100%;
+}
+
+ .circle-big svg {
+  width: 300px;
+  height: 300px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.circle-big img{
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+}
+
+.circle-big img.left{
+  animation: lefthand 1.5s ease-in-out 0.3s infinite reverse;
+}
+
+.circle-big img.right{
+  transform:rotateY(180deg);
+  animation: righthand 1.5s ease-in-out 0.3s infinite reverse;
+}
+
+.circle-big .bg {
+  fill: none;
+  stroke-width: 10px;
+  stroke: #ffffff;
+}
+
+.circle-big .progress {
+  fill: none;
+  stroke-width: 10px;
+  stroke: #9a0fe0;
+  stroke-linecap: round;
+  stroke-dasharray: 1000;
+  transition: 1s;
+          transform: rotate(-90deg);
+          transform-origin: 50% 50%;
+          
+} 
+@keyframes lefthand {
+  from {
+    transform: translate(-50%, -50%);
+  }
+  to {
+    transform: translate(-300%, 100%);
+  }
+}
+@keyframes righthand {
+  from {
+    transform: translate(-50%, -50%) rotateY(180deg);
+  }
+  to {
+    transform: translate(300%, 100%) rotateY(180deg);
+  }
+}
+
+
+@keyframes moveToFlowerPromptR2 {
+  0% { top: 10% }
+  100% { top: 50% }
+ }
+ @keyframes flowerVioletPos {
+  0% { opacity: 1; left: 20%; }
+  30% { opacity: 0; left: 20%; }
+  31% { opacity: 0; left: 80%; }
+  100% { opacity: 1; left: 80%; }
+ }
+ @keyframes flowerYellowPos {
+  0% { opacity: 1; left: 80%; }
+  30% { opacity: 0; left: 80%; }
+  31% { opacity: 0; left: 20%; }
+  100% { opacity: 1; left: 20%; }
+ }
+
+ @keyframes moveToFlowerPromptR3 {
+  0% { 
+    top: 10%;
+    left: 50% 
+  }
+  45% { 
+    top: 50%;
+    left: 20%; 
+  }
+  50% { 
+    top: 50%;
+    left: 20%; 
+  }
+  100% { 
+    top: 50%;
+    left: 80%; 
+  }
+ }
+
+@keyframes timerColor {
+  0% { background: #2dd141; }
+  50% { background: #deeb14; }
+  100% { background: #ff4242; }
+ }
+
+ @keyframes rotation {
+  from { transform: rotateZ(0);}
+  to { transform: rotateZ(360deg); }
+ }
+
+ @keyframes scaling {
+  0% { transform: translate(-50%,-50%) scale(0);}
+  20% { transform: translate(-50%,-50%) scale(1); }
+  80% { transform: translate(-50%,-50%) scale(1); }
+  100% { transform: translate(-50%,-50%) scale(0); }
+ }
+ @keyframes scalingTotal {
+  from { transform:scale(0);}
+  to { transform: scale(1); }
+ }

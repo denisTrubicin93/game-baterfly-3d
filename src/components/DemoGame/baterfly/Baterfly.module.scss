@@ -1,0 +1,44 @@
+.wrapper, .demoWrapper{
+  position: absolute;
+  transform: translate(-50%, -50%);
+
+  z-index: 10;
+}
+.wrapper > img{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 200%;
+}
+
+.demoWrapper img{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  
+}
+.baterfly{
+  z-index: 2;
+  width: 200%;
+  transform: translate(-50%, -50%);
+}
+.hand{
+  z-index: 1;
+  width: 100%;
+  transform: translate(100%, 0%) rotateY(180deg);
+  animation: handMove 3s ease-in-out 0.3s infinite;
+}
+
+@keyframes handMove {
+  0% {
+    transform: translate(100%, 0%) rotateY(180deg);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotateY(180deg);
+  }
+  100% {
+    transform: translate(-50%, 140%) rotateY(180deg);
+  }
+}
