@@ -270,7 +270,7 @@ export default class StudioSceneManager {
         if (this.round >= 2) {
           // this.buterflyTextures.
           let index = this.buterflyTextures.findIndex((el) => el.color === flower.color)
-          console.log(index)
+          console.log('index', index)
           this.buterflyTextures.splice(index, 1)
           console.log(this.buterflyTextures)
         }
@@ -285,16 +285,19 @@ export default class StudioSceneManager {
 
   endRound() {
     let this_ = this
+    for (let i = 0; i < this.flowers.length; i++) {
+      this.flowers[i].isActive = false
+    }
     gsap.to(this.scene.getTransformNodeByName('left').position, 2, { x: -120 })
     gsap.to(this.scene.getTransformNodeByName('right').position, 2, {
       x: 120, onComplete: () => {
         this_.buterflyList.forEach((el) => {
           el.meshes[0].dispose()
           el.meshes[0] = null
-          console.log(el)
         })
         this_.buterflyActive = null
         this_.buterflyList = []
+        this_.catchButerfly = null
         this_.currentButerfly = 0
         for (let i = 0; i < this_.flowers.length; i++) {
           this_.flowers[i].currentAnchor = 1
