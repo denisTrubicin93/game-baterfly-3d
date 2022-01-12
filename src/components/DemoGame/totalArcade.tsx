@@ -56,11 +56,12 @@ const TotalArcade = ({ gameFinish, clearScene }) => {
   const { points } = useSelector((state: RootState) => state.arcade);
   const [showTotal, setShowTotal] = useState(false)
   useEffect(() => {
-    if (gameFinish)
-      setTimeout(() => {
-        setShowTotal(true)
-        clearScene()
-      }, 5000);
+    if (gameFinish) {
+      setShowTotal(true)
+      clearScene()
+    }
+
+
 
     // dispatch(
     //   sendMessageAction({

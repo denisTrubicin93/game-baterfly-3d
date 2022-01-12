@@ -32,6 +32,7 @@ const EditorController = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [sound, setSound] = useState<any>();
   const [gameFinish, setGameFinish] = useState(false)
+  const [isEndRound, setIsEndRound] = useState(false)
   // const randomColorBaterfly = false;
   const { isActive, round, coords, startGame, points, ratio, typeScene } = useSelector((state: RootState) => state.arcade);
 
@@ -142,8 +143,8 @@ const EditorController = (props) => {
     // }, 3000);
   }
   const endRound = (end) => {
-    setGameFinish(end)
-    console.log(gameFinish)
+    gameManager.studioSceneManager.endRound()
+    setIsEndRound(end)
     // setSwitchRound(true)
     // setTimeout(() => {
     //   dispatch(setDefaultState());
@@ -152,14 +153,24 @@ const EditorController = (props) => {
     //   // history.push(`/round${round + 1}`);
     // }, 3000);
   }
+  const endGame = () => {
+    setGameFinish(true)
+  }
   // useEffect(() => {
   //   console.log(imgRef.current.naturalWidth, imgRef.current.naturalHeight)
   // }, [imgRef]);
   useEffect(() => {
     if (startGame) {
-      gameManager.studioSceneManager.startGame(typeScene)
+      gameManager.studioSceneManager.startGame(typeScene, round)
     }
   }, [startGame])
+
+  useEffect(() => {
+    if (round > 1) {
+      setIsEndRound(false)
+      gameManager.studioSceneManager.startGame(typeScene, round)
+    }
+  }, [round])
 
   const playAudio = () => {
     const [play] = sound;
@@ -238,7 +249,7 @@ const EditorController = (props) => {
           </Box>
 
           <TotalArcade {...{ gameFinish, clearScene }} />
-          <TimeOver {...{ gameFinish }} />
+          <TimeOver {...{ isEndRound, endGame }} />
         </Box>
       </Box>
 

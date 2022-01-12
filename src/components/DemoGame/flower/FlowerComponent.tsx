@@ -10,7 +10,7 @@ const FlowerComponent = () => {
   // const { image, x } = props;
   // const { image, x } = flower;
 
-  const { prompt } = useSelector((state: RootState) => state.arcade);
+  const { prompt, round } = useSelector((state: RootState) => state.arcade);
 
   // const factorWidth = 1.6875;
   // const [leftHand, rightHand] = coords.result;
@@ -50,17 +50,31 @@ const FlowerComponent = () => {
     <Box>
       <Box
         sx={{
-          display: `${prompt === 2 ? 'block' : 'none'}`,
+          // display: `${prompt === 2 ? 'block' : 'none'}`,
+          // position: 'absolute',
+          // top: '100px',
+          // left: '50%',
+          // transform: 'translateX(-50%)',
+          // color: 'orange',
+          // background: '#000000a3',
+          // borderRadius: '50px',
+          // padding: '20px',
+          // textAlign: 'center',
+          // transition: '0.5s',
+
+          display: `${prompt === 2 && round === 1 ? 'block' : 'none'}`,
+          width: '700px',
           position: 'absolute',
-          top: '100px',
+          top: '300px',
           left: '50%',
           transform: 'translateX(-50%)',
           color: 'orange',
-          background: '#000000a3',
+          background: prompt === 2 ? '#000000a3' : 'none',
           borderRadius: '50px',
           padding: '20px',
           textAlign: 'center',
           transition: '0.5s',
+
         }}
       >
 

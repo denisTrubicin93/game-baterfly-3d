@@ -1,11 +1,28 @@
-import React from 'react';
-import style from './TimeOver.module.css'
+import React, { useRef } from 'react';
+import style from './TimeOver.module.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { setRound, setPrompt } from 'features/Arcade/reducer';
+import { RootState } from 'features';
 
-const TimeOver = ({ gameFinish }) => {
+
+const TimeOver = ({ isEndRound, endGame }) => {
+    const timeRef = useRef()
+    const dispatch = useDispatch()
+    const { round } = useSelector((state: RootState) => state.arcade);
+    const handleAnimation = () => {
+        if (round < 3) {
+            dispatch(setPrompt(2))
+            setTimeout(() => {
+                dispatch(setRound(round + 1))
+                dispatch(setPrompt(3))
+            }, 5000);
+        } else endGame()
+
+    }
     return (
         <>
-            <div className={style.timeWrap} style={{
-                animation: gameFinish ? 'scaling 6s' : ''
+            <div ref={timeRef} onAnimationEnd={handleAnimation} className={style.timeWrap} style={{
+                animation: isEndRound ? 'scaling 6s' : ''
             }}>
                 <h1>
                     <span>t</span>

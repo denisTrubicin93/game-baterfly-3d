@@ -53,8 +53,8 @@ const SB = styled('div')({
 const StatusBar = (props) => {
   const dispatch = useDispatch()
   // const history = useHistory()
-  const time = 40
-  const { points, startGame } = useSelector((state: RootState) => state.arcade);
+  const time = 30
+  const { points, startGame, round } = useSelector((state: RootState) => state.arcade);
   const [seconds, setSeconds] = useState(time);
 
   useEffect(() => {
@@ -63,26 +63,39 @@ const StatusBar = (props) => {
         setSeconds(seconds - 1);
       }, 1000);
     } else if (seconds === 0) {
+      if (round === 3) {
+        dispatch(
+          sendMessageAction({
+            to: 'pose',
+            message: {
+              cmd: 'hands_detect_stop',
+            },
+          })
+        )
+      }
 
-      dispatch(
-        sendMessageAction({
-          to: 'pose',
-          message: {
-            cmd: 'hands_detect_stop',
-          },
-        })
-      )
       props.endRound(true)
 
       // props.endRound(round);
     }
+
   }, [seconds]);
   useEffect(() => {
-    if (startGame) setSeconds(() => seconds - 1);
+    if (startGame) {
+      setTimeout(() => {
+        setSeconds(() => seconds - 1);
+      }, 4000);
+    }
+    if (round === 2) setTimeout(() => {
+      setSeconds(() => 30);
+    }, 3000);
+    if (round === 3) setTimeout(() => {
+      setSeconds(() => 30);
+    }, 3000);
     // if (startGame && round < 3) setSeconds(() => 3 - 1);
     // if (round < 3) setSeconds(() => 3);
     // if (startGame && round === 3) setSeconds(() => 29);
-  }, [startGame])
+  }, [startGame, round])
   return (
     <div>
       <SB>

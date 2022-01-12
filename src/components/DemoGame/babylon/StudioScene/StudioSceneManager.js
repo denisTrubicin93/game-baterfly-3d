@@ -4,8 +4,8 @@ import "@babylonjs/gui"
 import { Flowers } from './Flowers'
 import { gsap } from 'gsap'
 import { startPosition, randomVector } from '../../../../utils/funcs'
-import flowersModel from '../../assets/models/flowersBranch.glb'
-import groundFlowerModel from '../../assets/models/groundFlower.glb'
+import flowersModel from '../../assets/models/flowersBranch-v2.glb'
+import groundFlowerModel from '../../assets/models/groundFlower-v2.glb'
 import buterflyModel from '../../assets/models/buterfly3.glb'
 import roundModel from '../../assets/models/round.glb'
 import redTex from '../../assets/red_tex.png'
@@ -25,6 +25,7 @@ export default class StudioSceneManager {
     this.scene = null;
     this.studioGui = null;
     this.mainCamera = null;
+    this.flowers = Flowers
 
     this.catchButerfly = null
     this.disableButerfly = false
@@ -33,13 +34,15 @@ export default class StudioSceneManager {
     this.buterflyList = []
     this.points = 0
     this.sound = null
+    this.round = 1
     this.buterflyTextures = [
-      violetTex,
-      redTex,
-      orangeTex,
-      whiteTex,
-      lightblueTex
+      { color: 'red', tex: redTex },
+      { color: 'violet', tex: violetTex },
+      { color: 'lightblue', tex: lightblueTex },
+      { color: 'orange', tex: orangeTex },
+      { color: 'white', tex: whiteTex },
     ]
+    this.flowersList = ['violet', 'red', 'white', 'lightblue', 'orange']
 
     this.typeScene = null
     this.maxAnchorFlower = 0
@@ -132,10 +135,49 @@ export default class StudioSceneManager {
   moveButerfly() {
     if (this.catchButerfly) return
     let randomPos = randomVector(30)
-    gsap.to(this.buterflyActive.meshes[0].position, 4, {
-      x: randomPos.x, y: randomPos.y, onComplete: () => {
-        if (!this.catchButerfly)
-          this.moveButerfly()
+    if (this.buterflyActive) {
+      gsap.to(this.buterflyActive.meshes[0].position, 4, {
+        x: randomPos.x, y: randomPos.y, onComplete: () => {
+          if (!this.catchButerfly)
+            this.moveButerfly()
+        }
+      })
+    }
+  }
+
+  changePositionFlower() {
+    let rnd1 = Math.round(Math.random() * (this.flowersList.length - 1))
+    let rnd2 = Math.round(Math.random() * (this.flowersList.length - 1))
+    while (rnd1 === rnd2) {
+      rnd2 = Math.round(Math.random() * (this.flowersList.length - 1))
+    }
+    console.log(rnd1, rnd2)
+    // let flower1 = this.scene.getTransformNodeByName(`Flower_${this.flowersList[rnd1]}`)
+    // let flower2 = this.scene.getTransformNodeByName(`Flower_${this.flowersList[rnd2]}`)
+    let root1 = this.scene.getTransformNodeByName(`root_${this.flowersList[rnd1]}`)
+    let root2 = this.scene.getTransformNodeByName(`root_${this.flowersList[rnd2]}`)
+    let flower1 = root1.getChildTransformNodes()[0]
+    let flower2 = root2.getChildTransformNodes()[0]
+    console.log(root1, root2)
+    let pos1 = root1.getAbsolutePosition()
+    let pos2 = root2.getAbsolutePosition()
+    gsap.to(flower1.scaling, 0.5, { x: 0, y: 0, z: 0 })
+    gsap.to(flower2.scaling, 0.5, {
+      x: 0, y: 0, z: 0, onComplete: () => {
+        flower1.setAbsolutePosition(pos2.x, pos2.y, pos2.z)
+        flower2.setAbsolutePosition(pos1.x, pos1.y, pos1.z)
+        flower1.setParent(root2)
+        flower2.setParent(root1)
+        // flower1.rotationQuaternion = this.scene.getMeshByName(`flower_${this.flowersList[rnd2]}`).rotationQuaternion
+        // flower2.rotationQuaternion = root1.rotationQuaternion
+        gsap.to(flower1.scaling, 0.5, { x: 1, y: 1, z: 1 })
+        gsap.to(flower2.scaling, 0.5, {
+          x: 1, y: 1, z: 1, onComplete: () => {
+            setTimeout(() => {
+              this.changePositionFlower()
+            }, 2000);
+          }
+        })
       }
     })
   }
@@ -156,12 +198,17 @@ export default class StudioSceneManager {
     buterfly.meshes[0].rotation.y = Math.PI / 1.3
     buterfly.meshes[0].rotationQuaternion = undefined
     buterfly.meshes[1].isVisible = false
-    // let randomTexture = this.buterflyTextures[Math.round(Math.random() * 4)]
-    // buterfly.meshes[1].material.albedoTexture.updateURL(randomTexture)
-    // let newButerfly = this.buterfly.clone('buterfly1')
+    if (this.round >= 2 && this.buterflyTextures.length > 0) {
+      let random = Math.round(Math.random() * (this.buterflyTextures.length - 1))
+      let randomTexture = this.buterflyTextures[random].tex
+      buterfly.meshes[1].material.albedoTexture.updateURL(randomTexture)
+      buterfly.color = this.buterflyTextures[random].color
+      // let newButerfly = this.buterfly.clone('buterfly1')
+    }
+
     this.buterflyList.push(buterfly)
     this.buterflyActive = this.buterflyList[this.currentButerfly]
-    // console.log(this.buterflyActive)
+    console.log(this.buterflyActive)
     this.initPosButerfly = this.typeScene === 'adult' ? startPosition(60) : startPosition(-60)
     this.buterflyActive.meshes[0].position = new BABYLON.Vector3(this.initPosButerfly.x, this.initPosButerfly.y, 20)
     // this.buterflyActive.meshes[0].position = new BABYLON.Vector3(0, 0, 20)
@@ -196,10 +243,10 @@ export default class StudioSceneManager {
 
   detectFlowers(posButerfly, flower) {
     let centerFlower = this.typeScene === 'adult' ?
-      this.scene.getTransformNodeByName(`${flower.color}-center-g`).position :
-      this.scene.getTransformNodeByName(`${flower.color}-center`).position;
-    let xMin = (centerFlower.x + 7) * -1;
-    let xMax = (centerFlower.x - 7) * -1;
+      this.scene.getTransformNodeByName(`${flower.color}-center-g`).getAbsolutePosition() :
+      this.scene.getTransformNodeByName(`${flower.color}-center`).getAbsolutePosition();
+    let xMin = (centerFlower.x - 7);
+    let xMax = (centerFlower.x + 7);
     let yMax = (centerFlower.y + 7);
     let yMin = (centerFlower.y - 7);
     if (posButerfly.x < xMax &&
@@ -207,6 +254,8 @@ export default class StudioSceneManager {
       posButerfly.y < yMax &&
       posButerfly.y > yMin &&
       this.buterflyActive.meshes[0].name !== 'disable') {
+      // let flowerB = this.scene.getTransformNodeByName('Flower_red')
+      // gsap.to(flowerB.scaling, 5, { x: 0, y: 0, z: 0 })
       this.buterflyActive.meshes[0].name = 'disable'
       let parentNode = this.scene.getMeshByName(`anchor-${flower.color}-${flower.currentAnchor}`)
       this.buterflyActive.meshes[0].rotation = new BABYLON.Vector3(0, Math.PI, 0)
@@ -216,8 +265,17 @@ export default class StudioSceneManager {
       this.catchButerfly = null
       if (flower.currentAnchor < this.maxAnchorFlower)
         flower.currentAnchor++
-      else
+      else {
         flower.isActive = true
+        if (this.round >= 2) {
+          // this.buterflyTextures.
+          let index = this.buterflyTextures.findIndex((el) => el.color === flower.color)
+          console.log(index)
+          this.buterflyTextures.splice(index, 1)
+          console.log(this.buterflyTextures)
+        }
+      }
+
       this.currentButerfly++
       this.points++
       this.sound = 'success'
@@ -225,7 +283,29 @@ export default class StudioSceneManager {
     }
   }
 
-  startGame(type) {
+  endRound() {
+    let this_ = this
+    gsap.to(this.scene.getTransformNodeByName('left').position, 2, { x: -120 })
+    gsap.to(this.scene.getTransformNodeByName('right').position, 2, {
+      x: 120, onComplete: () => {
+        this_.buterflyList.forEach((el) => {
+          el.meshes[0].dispose()
+          el.meshes[0] = null
+          console.log(el)
+        })
+        this_.buterflyActive = null
+        this_.buterflyList = []
+        this_.currentButerfly = 0
+        for (let i = 0; i < this_.flowers.length; i++) {
+          this_.flowers[i].currentAnchor = 1
+        }
+      }
+    })
+  }
+
+  startGame(type, round) {
+    this.changeRoundNum(round)
+    this.round = round
     let model
     this.typeScene = type
     if (type === 'adult') model = groundFlowerModel
@@ -242,6 +322,11 @@ export default class StudioSceneManager {
         gsap.to(this.scene.getTransformNodeByName('right').position, 2, {
           x: 50, onComplete: () => {
             this.loadButerflyModel()
+            if (this.round === 3) {
+              setTimeout(() => {
+                this.changePositionFlower()
+              }, 2000);
+            }
           }
         })
       }
@@ -282,9 +367,13 @@ export default class StudioSceneManager {
         gsap.to(model.meshes[0].position, 0.5, { x: this.startingPoint.x, y: this.startingPoint.y })
         // model.meshes[0].position.x = this.startingPoint.x
         // model.meshes[0].position.y = this.startingPoint.y
-        for (let i = 0; i < Flowers.length; i++) {
-          if (!Flowers[i].isActive)
-            this.detectFlowers(posButerfly, Flowers[i])
+
+        for (let i = 0; i < this.flowers.length; i++) {
+          if (this.round === 1 && !this.flowers[i].isActive)
+            this.detectFlowers(posButerfly, this.flowers[i])
+          if (this.round >= 2 && !this.flowers[i].isActive && this.buterflyActive.color === this.flowers[i].color) {
+            this.detectFlowers(posButerfly, this.flowers[i])
+          }
         }
       } else {
         this.detectButerfly(posButerfly, hand)

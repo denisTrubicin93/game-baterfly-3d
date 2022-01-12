@@ -4,8 +4,14 @@ import { RootState } from 'features';
 import { Box, Typography } from '@mui/material';
 // import BaterflyDemo from './baterfly/BaterflyDemo';
 // import baterflyImg from './assets/baterfly-blue.gif'
-import promptVideo from './assets/prompt1-v2.mp4'
-import promptVideo_Ground from './assets/prompt-1-g.mp4'
+import promptVideo_1 from './assets/video/prompt1-v2.mp4'
+import promptVideo_Ground_1 from './assets/video/prompt-1-g.mp4'
+import promptVideo_2 from './assets/video/prompt-2-b.mp4'
+import promptVideo_Ground_2 from './assets/video/prompt-2-g.mp4'
+import promptVideo_3 from './assets/video/prompt-3-b.mp4'
+import promptVideo_Ground_3 from './assets/video/prompt-3-g.mp4'
+// import promptVideo-3 from './assets/prompt1-v2.mp4'
+// import promptVideo_Ground-3 from './assets/prompt-1-g.mp4'
 // import { setPrompt } from 'features/Arcade/reducer';
 // import { fireRotation } from '../../containers/Demo/fireRotation';
 // import baterflyImg from './assets/baterfly-1.gif';
@@ -19,6 +25,7 @@ const HandComponent = () => {
   );
   // const [rotations, setRotations] = useState({ leftRot: 0, rightRot: 0 });
   const [hideCircle, setHideCircle] = useState(false);
+  const [video, setVideo] = useState(null)
   // const color = 'blue'
   const [leftHand, rightHand] = coords.result;
   const [[xl1, yl1], [xl2, yl2]] = leftHand;
@@ -38,13 +45,36 @@ const HandComponent = () => {
   };
 
   useEffect(() => {
-    console.log('prompt', prompt, round)
+    // console.log('prompt', prompt, round)
     if (prompt === 1) {
       setTimeout(() => {
         setHideCircle(true)
       }, 1000);
     }
+    if (prompt === 3) {
+      setTimeout(() => {
+        switch (round) {
+          case 1:
+            setVideo(() => typeScene === 'adult' ? promptVideo_Ground_2 : promptVideo_2)
+            break;
+          case 2:
+            setVideo(() => typeScene === 'adult' ? promptVideo_Ground_3 : promptVideo_3)
+            break;
+          default:
+            break;
+        }
+      }, 1000);
+
+    }
   }, [prompt])
+
+  useEffect(() => {
+    if (typeScene === 'adult') {
+      setVideo(promptVideo_Ground_1)
+    } else {
+      setVideo(promptVideo_1)
+    }
+  }, [])
   // const hlaCenter = {
   //   x: 1080 - hla.xMin,
   //   y: hla.yMin,
@@ -100,7 +130,7 @@ const HandComponent = () => {
           transition: '0.5s',
         }}
       >
-        <video src={typeScene === 'adult' ? promptVideo_Ground : promptVideo} loop autoPlay={true} style={{
+        <video src={video} loop autoPlay={true} style={{
           display: 'block',
           width: prompt === 2 ? '100%' : '0',
           position: 'absolute',
@@ -117,6 +147,7 @@ const HandComponent = () => {
           }}
         >
           両手をここにかざして、ゲーム開始!
+          {/* 空中に飛んでいる蝶々を手で捕まえて、お花さんにゆうどうしてね! */}
         </Typography>
       </Box>
 
